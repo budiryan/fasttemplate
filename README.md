@@ -1,5 +1,6 @@
 fasttemplate
 ============
+[![Build Status](https://travis-ci.com/budiryan/fasttemplate.svg?branch=master)](https://travis-ci.com/budiryan/fasttemplate)
 
 Simple and fast template engine for Go.
 
