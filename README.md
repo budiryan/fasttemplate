@@ -1,7 +1,7 @@
 fasttemplate
 ============
 [![Build Status](https://travis-ci.com/budiryan/fasttemplate.svg?branch=master)](https://travis-ci.com/budiryan/fasttemplate)
-
+[![Coverage Status](http://codecov.io/github/vendor/package/coverage.svg?branch=master)](http://codecov.io/github/vendor/package?branch=master)
 Simple and fast template engine for Go.
 
 Fasttemplate peforms only a single task - it substitutes template placeholders
