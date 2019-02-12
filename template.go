@@ -94,7 +94,7 @@ func ExecuteFuncString(template, startTag, endTag string, f TagFunc) (string, er
 	if _, err := ExecuteFunc(template, startTag, endTag, bb, f); err != nil {
 		return s, err
 	}
-	s = string(bb.B)
+	s = bb.String()
 	bb.Reset()
 	byteBufferPool.Put(bb)
 	return s, nil
@@ -205,6 +205,7 @@ func (t *Template) Reset(template, startTag, endTag string) error {
 	}
 
 	for {
+		// Scans through the template, collect the TAGS and TEXTS and and those to Template obj
 		n := bytes.Index(templateBytes, startTagBytes)
 		if n < 0 {
 			t.texts = append(t.texts, templateBytes)
@@ -214,6 +215,7 @@ func (t *Template) Reset(template, startTag, endTag string) error {
 
 		templateBytes = templateBytes[n+len(startTagBytes):]
 
+		// Scan to check for nested duplicate closing tags, if there is any, regard those duplicate closing tags as normal text
 		startTagIdx := bytes.Index(templateBytes, startTagBytes)
 		endTagIdx := bytes.Index(templateBytes, endTagBytes)
 		var missingTag []byte
@@ -229,6 +231,7 @@ func (t *Template) Reset(template, startTag, endTag string) error {
 			nNext = len(templateBytes)
 		}
 
+		// Handle the case when startTag == endTag, need to check the next starting tag
 		if reflect.DeepEqual(startTagBytes, endTagBytes) {
 			sRemaining := templateBytes[nNext+len(startTagBytes):]
 
@@ -240,6 +243,7 @@ func (t *Template) Reset(template, startTag, endTag string) error {
 			}
 		}
 
+		// Get the tag and append to Template obj's `tags` attribute
 		n = bytes.LastIndex(templateBytes[:nNext], endTagBytes)
 		if n < 0 {
 			return fmt.Errorf("cannot find end tag=%q in the template=%q starting from %q", endTag, template, templateBytes)
@@ -311,7 +315,7 @@ func (t *Template) ExecuteFuncString(f TagFunc) (string, error) {
 	if _, err := t.ExecuteFunc(bb, f); err != nil {
 		return s, err
 	}
-	s = string(bb.Bytes())
+	s = bb.String()
 	bb.Reset()
 	t.byteBufferPool.Put(bb)
 	return s, nil
