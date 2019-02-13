@@ -25,7 +25,7 @@ func ExampleTemplate() {
 		}),
 	}
 
-	s := t.ExecuteString(m)
+	s, _ := t.ExecuteString(m)
 	fmt.Printf("%s", s)
 
 	// Output:
@@ -57,7 +57,7 @@ func ExampleTagFunc() {
 		}),
 	}
 
-	s := t.ExecuteString(m)
+	s, _ := t.ExecuteString(m)
 	fmt.Printf("%s", s)
 
 	// Output:
@@ -70,7 +70,7 @@ func ExampleTemplate_ExecuteFuncString() {
 	if err != nil {
 		log.Fatalf("unexpected error when parsing template: %s", err)
 	}
-	s := t.ExecuteFuncString(func(w io.Writer, tag string) (int, error) {
+	s, _ := t.ExecuteFuncString(func(w io.Writer, tag string) (int, error) {
 		switch tag {
 		case "user":
 			return w.Write([]byte("John"))
@@ -84,4 +84,20 @@ func ExampleTemplate_ExecuteFuncString() {
 
 	// Output:
 	// Hello, John! You won $100500!!! [unknown tag "foobar"]
+}
+
+func ExampleNestedTags() {
+	template := "text1 {{ {{{{foo}}}} }} text2 {{ {{||bar}}|| }} text3"
+	t, _ := NewTemplate(template, "{{", "}}")
+
+	m := map[string]interface{}{
+		"{{{{foo}}}}": "foo replaced",
+		"{{||bar}}||": "bar replaced",
+	}
+
+	s, _ := t.ExecuteString(m)
+	fmt.Printf("%s", s)
+
+	// Output:
+	// text1 foo replaced text2 bar replaced text3
 }
