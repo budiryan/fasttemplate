@@ -164,6 +164,17 @@ func TestIdenticalDelimiter2(t *testing.T) {
 	}
 }
 
+func TestExecuteMapString(t *testing.T) {
+	template := "foo@foo@foo@aaa@hhh"
+	tpl := New(template, "@", "@")
+
+	s, _ := tpl.ExecuteMapString(map[string]string{"foo": "111", "aaa": "bbb"})
+	result := "foo111foobbbhhh"
+	if s != result {
+		t.Fatalf("unexpected template value %q. Expected %q", s, result)
+	}
+}
+
 func TestMissingClosingTagsInTemplate(t *testing.T) {
 	template := "foo{{a}} {{b"
 	_, err := NewTemplate(template, "{{", "}}")
