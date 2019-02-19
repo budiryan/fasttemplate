@@ -234,6 +234,15 @@ func (t *Template) ExecuteString(m map[string]interface{}) (string, error) {
 	return t.ExecuteFuncString(func(w io.Writer, tag string) (int, error) { return stdTagFunc(w, tag, m) })
 }
 
+// ExecuteMapString is a convenience function that takes in map[string]string explicitly
+func (t *Template) ExecuteMapString(m map[string]string) (string, error) {
+	mInterface := make(map[string]interface{})
+	for key, value := range m {
+		mInterface[key] = value
+	}
+	return t.ExecuteString(mInterface)
+}
+
 func stdTagFunc(w io.Writer, tag string, m map[string]interface{}) (int, error) {
 	v := m[tag]
 	if v == nil {
